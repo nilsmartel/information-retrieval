@@ -1,25 +1,31 @@
-#[cfg(test)]
-mod test {
-    use super::*;
+pub struct Words<'a> {
+    chars: std::str::Chars<'a>,
+}
 
-    #[test]
-    fn iter_word() {
-        let word = "Hello, World! My name is Nils Martel.";
-        let iter = Words {
-            chars: word.chars(),
-        };
+impl<'a> Words<'a> {
+    pub fn new(chars: std::str::Chars<'a>) -> Self {
+        Self { chars }
+    }
 
-        let collection: Vec<String> = iter.collect();
-
-        assert_eq!(
-            collection,
-            vec!["Hello", "World", "My", "name", "is", "Nils", "Martel"]
-        );
+    pub fn from_str(s: &'a str) -> Self {
+        Self { chars: s.chars() }
     }
 }
 
-struct Words<'a> {
-    chars: std::str::Chars<'a>,
+pub trait IntoWords<'a> {
+    fn words(&'a self) -> Words<'a>;
+}
+
+impl<'a> IntoWords<'a> for str {
+    fn words(&'a self) -> Words<'a> {
+        Words::from_str(self)
+    }
+}
+
+impl<'a> IntoWords<'a> for String {
+    fn words(&'a self) -> Words<'a> {
+        Words::from_str(self)
+    }
 }
 
 impl<'a> Iterator for Words<'a> {
@@ -54,5 +60,25 @@ impl<'a> Iterator for Words<'a> {
         }
 
         return Some(s);
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn iter_word() {
+        let word = "Hello, World! My name is Nils Martel.";
+        let iter = Words {
+            chars: word.chars(),
+        };
+
+        let collection: Vec<String> = iter.collect();
+
+        assert_eq!(
+            collection,
+            vec!["Hello", "World", "My", "name", "is", "Nils", "Martel"]
+        );
     }
 }
