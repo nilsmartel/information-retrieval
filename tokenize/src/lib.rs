@@ -1,8 +1,8 @@
-pub struct Words<'a> {
+pub struct Tokens<'a> {
     chars: std::str::Chars<'a>,
 }
 
-impl<'a> Words<'a> {
+impl<'a> Tokens<'a> {
     pub fn new(chars: std::str::Chars<'a>) -> Self {
         Self { chars }
     }
@@ -12,23 +12,23 @@ impl<'a> Words<'a> {
     }
 }
 
-pub trait IntoWords<'a> {
-    fn words(&'a self) -> Words<'a>;
+pub trait IntoTokens<'a> {
+    fn tokens(&'a self) -> Tokens<'a>;
 }
 
-impl<'a> IntoWords<'a> for str {
-    fn words(&'a self) -> Words<'a> {
-        Words::from_str(self)
+impl<'a> IntoTokens<'a> for str {
+    fn tokens(&'a self) -> Tokens<'a> {
+        Tokens::from_str(self)
     }
 }
 
-impl<'a> IntoWords<'a> for String {
-    fn words(&'a self) -> Words<'a> {
-        Words::from_str(self)
+impl<'a> IntoTokens<'a> for String {
+    fn tokens(&'a self) -> Tokens<'a> {
+        Tokens::from_str(self)
     }
 }
 
-impl<'a> Iterator for Words<'a> {
+impl<'a> Iterator for Tokens<'a> {
     type Item = String;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -68,13 +68,10 @@ mod test {
     use super::*;
 
     #[test]
-    fn iter_word() {
-        let word = "Hello, World! My name is Nils Martel.";
-        let iter = Words {
-            chars: word.chars(),
-        };
+    fn iter_token() {
+        let sentence = "Hello, World! My name is Nils Martel.";
 
-        let collection: Vec<String> = iter.collect();
+        let collection: Vec<String> = sentence.tokens().collect();
 
         assert_eq!(
             collection,
